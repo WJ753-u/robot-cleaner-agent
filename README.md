@@ -2,7 +2,7 @@
 
 一个面向扫地机器人/扫拖一体机场景的本地化 RAG + Agent 项目。项目使用 LangChain、Ollama、Chroma、MCP、FastAPI、SQLAlchemy 和 Streamlit 构建，支持垂直领域知识库问答、工具调用、实时天气查询、会话持久化、知识库上传重建和个性化报告生成。
 
-本项目定位为个人学习和简历展示级的垂直领域智能客服原型，不是生产级通用知识库平台。
+
 
 ## 功能特性
 
@@ -228,33 +228,6 @@ answer
 error
 done
 ```
-
-## GitHub 仓库说明
-
-以下内容不会提交到仓库：
-
-- `.env`：本地密钥和数据库连接。
-- `log/`：运行日志。
-- `agent_runtime.db`：本地 SQLite 数据库。
-- `chroma_db/`：本地向量库。
-- `models/`：本地大模型、reranker 权重和量化文件。
-- `eval/`：本地检索评估结果和实验产物。
-- `data/llama_factory_robot_dataset/`：LoRA 训练数据。
-
-如果你曾经把真实 API Key 提交到远程仓库，建议立即在高德控制台重置 Key。
-
-## 项目亮点
-
-- 将 Agent 编排、RAG 检索、MCP 外部工具和 Web UI 串成完整闭环。
-- 用 FastAPI 将本地 Agent 服务化，Streamlit 只负责交互展示。
-- 工具调用过程以结构化事件输出，便于前端展示和数据库持久化。
-- 支持 SQLite 快速调试和 MySQL 扩展部署。
-- LoRA/GGUF 被设计为可选增强层，而不是强依赖，降低本地部署门槛。
-- RAG 支持混合检索、元数据引用和可选 rerank，便于继续做召回优化。
-
-## 适合简历的描述
-
-基于 LangChain、Ollama、Chroma、MCP、FastAPI、SQLAlchemy 和 Streamlit 开发扫地机器人智能客服 Agent，支持本地知识库 RAG、ReAct 风格工具调用、高德地图 MCP 实时天气查询、用户使用记录查询、会话持久化、知识库上传重建和个性化报告生成；设计工具调用事件流、动态 Prompt 切换、SQLite/MySQL 持久化和可选 LoRA/GGUF 领域模型增强机制，实现一个可本地运行的垂直领域智能客服原型。
 
 ## 后续优化方向
 
