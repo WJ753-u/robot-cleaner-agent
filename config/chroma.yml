@@ -1,0 +1,39 @@
+collection_name: agent
+persist_directory: chroma_db
+manifest_path: chroma_db/manifest.json
+
+# Knowledge base source directory and supported upload formats.
+data_path: data
+allow_knowledge_file_type: ["txt", "pdf", "doc", "docx", "xlsx", "xls", "pptx", "csv"]
+
+# Retriever output size.
+k: 5
+vector_k: 8
+bm25_k: 8
+
+# Chunking strategy.
+chunk_size: 500
+chunk_overlap: 80
+min_chunk_chars: 20
+separators: ["\n\n", "\n", "。", "；", "，", ".", "!", "?", " "]
+
+# Hybrid retrieval scoring.
+hybrid_search: true
+query_expansion: true
+vector_weight: 0.75
+bm25_weight: 0.15
+overlap_weight: 0.10
+source_intent_weight: 0.20
+max_chunks_per_source: 2
+
+# Optional BGE reranker. Disabled by default so the repository can run without
+# bundling large model weights. Enable it after downloading the reranker model.
+reranker_enabled: false
+reranker_model_name: "BAAI/bge-reranker-v2-m3"
+reranker_use_fp16: false
+reranker_normalize: true
+reranker_candidate_limit: 20
+reranker_batch_size: 8
+reranker_max_length: 512
+reranker_weight: 0.85
+reranker_hybrid_weight: 0.15

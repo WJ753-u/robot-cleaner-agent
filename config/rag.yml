@@ -1,0 +1,20 @@
+chat_model_name: qwen3:8b
+chat_base_url: http://127.0.0.1:11434
+model_provider: ollama
+
+embedding_model_name: qwen3-embedding:0.6b
+embedding_base_url: http://127.0.0.1:11434
+
+# Optional llama.cpp LoRA/GGUF model.
+# When enabled, it is used for RAG summarization and final answer polishing.
+# The main Agent model still uses Ollama qwen3:8b for stable tool calling.
+llama_cpp_enabled: false
+llama_cpp_base_url: http://127.0.0.1:8080
+llama_cpp_timeout: 240
+llama_cpp_n_predict: 512
+llama_cpp_temperature: 0.1
+llama_cpp_top_p: 0.8
+llama_cpp_top_k: 20
+llama_cpp_repeat_penalty: 1.15
+llama_cpp_system_prompt: |
+  你是扫地/扫拖一体机器人领域的智能客服助手。只回答产品选购、故障排查、维护保养、耗材更换、地图建图、基站和使用设置相关问题。领域内问题要直接给出中文排查步骤或使用建议；领域外请求要礼貌拒绝，不要完成无关任务。

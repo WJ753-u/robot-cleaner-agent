@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Runtime outputs
+log/
+logs/
+*.log
+.tmp/
+tmp/
+agent_runtime.db
+*.db
+*.sqlite
+*.sqlite3
+md5.text
+chroma_db/
+
+# Evaluation and experiment outputs
+eval/
+runs/
+outputs/
+wandb/
+*.csv
+!data/external/*.csv
+
+# Large local model artifacts
+models/
+*.gguf
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+
+# LoRA training datasets generated from this project
+data/llama_factory_robot_dataset/
+
+# Local editor files
+.vscode/
+.idea/
