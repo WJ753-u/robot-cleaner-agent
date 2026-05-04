@@ -16,6 +16,25 @@
 - 可选 LoRA/GGUF 模型：可通过 llama.cpp server 接入领域微调模型，用于 RAG 总结和最终回答优化。
 - 可选 reranker：支持 BGE reranker 对召回结果重排，默认关闭，避免仓库依赖大模型权重。
 
+## 关键创新点
+
+- 混合检索增强：RAG 检索阶段结合 Chroma 向量检索与 BM25 关键词检索，同时兼顾语义相似度和专业词匹配，提升故障名、部件名、耗材名等垂直领域问题的召回稳定性。
+
+- 领域词与来源意图加权：内置扫地机器人领域关键词体系，并根据用户问题意图对知识来源加权，例如选购类问题优先匹配选购指南，故障类问题优先匹配故障排除文档，提升垂直领域检索命中率。
+
+- 可选 BGE Reranker 精排：支持在 Hybrid 召回后接入 BGE reranker 对候选文档进行二次排序，并记录 `bge_rerank_score` 与 `rerank_final_score`，用于提升最终上下文质量。
+
+- 多格式文档处理链路：支持 `txt`、`pdf`、`doc/docx`、`xlsx/xls`、`pptx`、`csv` 等多种知识文件格式，形成“上传 → 解析 → 切分 → 向量化 → Chroma 入库 → 检索问答”的完整链路。
+
+- 知识库增量重建机制：通过文件 MD5 manifest 记录知识文件状态，重建知识库时跳过未变化文件，减少重复切分、重复向量化和重复入库成本。
+
+- Agent 工具注册中心与 MCP 接入：将本地业务工具、RAG 工具、MCP 工具统一注册管理，并通过 MCP 协议接入高德地图天气能力，使外部 API 能力以标准工具形式接入 Agent。
+
+- 结构化工具调用与 SSE 流式响应：Agent 执行过程中将 `tool_call`、`tool_result`、`answer`、`error` 等事件标准化输出，FastAPI 通过 `/chat/stream` 流式返回，前端可实时展示工具调用轨迹和生成过程。
+
+- 模型分层与降级机制：Ollama `qwen3:8b` 负责 Agent 编排和工具调用，`qwen3-embedding:0.6b` 负责向量化，可选 LoRA/GGUF 通过 llama.cpp server 负责 RAG 总结和最终回答增强；当增强模型不可用时自动回退到主模型回答链路。
+
+
 ## 技术栈
 
 | 模块 | 技术 |
@@ -53,8 +72,6 @@ Ollama qwen3:8b 负责 Agent 编排和工具调用
 可选增强：
 llama.cpp LoRA/GGUF 负责 RAG 总结和最终回答表达优化
 ```
-
-当前推荐架构是：**Ollama qwen3:8b 负责 Agent 主流程和工具调用，LoRA/GGUF 模型只作为最终回答增强层**。这样可以保留工具调用稳定性，同时利用领域微调模型优化客服口吻和领域边界。
 
 ## 目录结构
 
@@ -150,14 +167,14 @@ streamlit run app.py
 
 ## 可选：接入 LoRA/GGUF 微调模型
 
-仓库不包含 GGUF、LoRA adapter 或训练数据。你可以自行使用 llama.cpp server 启动本地领域模型：
+仓库不包含 GGUF、LoRA adapter 或训练数据。你可以自行进行LoRA微调并使用 llama.cpp server 启动本地领域模型，例如：
 
 ```powershell
 cd E:\llama.cpp-b6282\build\bin\Release
 .\llama-server.exe `
   -m "E:\llama_models\robot_qwen3_v4_q4km.gguf" `
   -c 4096 `
-  -ngl 20 `
+  -ngl 99 `
   --host 127.0.0.1 `
   --port 8080
 ```
@@ -169,7 +186,7 @@ llama_cpp_enabled: true
 llama_cpp_base_url: http://127.0.0.1:8080
 ```
 
-如果不启用，项目会使用 Ollama 主模型完成 RAG 总结和 Agent 原始回答。
+启用后会优化模型回复效果，但如果不启用，项目仍然会使用 Ollama 主模型完成 RAG 总结和 Agent 原始回答。
 
 ## 知识库管理
 
@@ -189,7 +206,6 @@ py scripts/debug_retrieval.py "扫地机器人怎么保养"
 allow_knowledge_file_type: ["txt", "pdf", "doc", "docx", "xlsx", "xls", "pptx", "csv"]
 ```
 
-向量库目录 `chroma_db/` 是运行产物，不提交到 GitHub。首次运行或上传文档后需要重建。
 
 ## API 接口
 
